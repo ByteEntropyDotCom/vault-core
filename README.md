@@ -24,13 +24,17 @@ The service utilizes **AES-256-GCM** (Galois/Counter Mode). Unlike standard AES,
 
 ### Run Locally
 ```bash
+export VAULT_MASTER_KEY="your-super-secret-32-char-key-here"
 mvn spring-boot:run
 ```
 
 ### Run Docker
 ```
 docker build -t byteentropy/vault-core .
-docker run -p 8086:8086 byteentropy/vault-core
+
+docker run -p 8086:8086 \
+  -e VAULT_MASTER_KEY="32-byte-long-secret-key-12345678" \
+  byteentropy/vault-core
 ```
 
 ## 📡 API Specification
