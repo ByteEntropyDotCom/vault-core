@@ -22,3 +22,81 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+# --- Java & Maven ---
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# --- IDEs (IntelliJ, Eclipse, VS Code) ---
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.nb-gradle/
+.vscode/
+bin/
+
+# --- Operating System ---
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- Docker & Logs ---
+*.log
+logs/
+.docker/
+
+# --- Sensitive Data & Secrets ---
+# Crucial: Never commit actual keys or local config files
+.env
+*.key
+*.pem
+secret.properties
+vault-core/src/main/resources/application-local.properties
+
+# --- Crash Reports ---
+hs_err_pid*
+replay_pid*
