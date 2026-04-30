@@ -1,0 +1,67 @@
+name: Vault Core Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      run_scan:
+        description: 'Run security scan?'
+        required: false
+        default: 'true'
+        type: string
+
+jobs:
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Maven Build & Test
+        # Removed the -f vault-core/pom.xml to run from root
+        run: mvn clean verify
+
+  containerize:
+    name: Docker Build & Smoke Test
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Local Image
+        uses: docker/build-push-action@v5
+        with:
+          # context: . means the current root directory
+          context: .
+          load: true
+          tags: "byteentropy/vault-core:latest"
+
+      - name: Quick Runtime Smoke Test
+        run: |
+          docker run -d --name test-run \
+            -e VAULT_MASTER_KEY=12345678901234567890123456789012 \
+            -p 8086:8086 byteentropy/vault-core:latest
+          sleep 15
+          docker ps | grep test-run
+          docker logs test-run | grep "Started VaultCoreApplication"
+          docker stop test-run
+
+      - name: Vulnerability Scan
+        if: github.event.inputs.run_scan == 'true' || github.event_name == 'push'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "byteentropy/vault-core:latest"
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL'
